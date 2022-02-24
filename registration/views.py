@@ -1,5 +1,5 @@
 
-from django.shortcuts import render
+# from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -42,7 +42,7 @@ class Register(APIView):
             return val
         if not any(char in SpecialSym for char in passwd):
             val = True
-            self.val = 'Password should have at least one of the symbols $@#'
+            self.message = 'Password should have at least one of the symbols $@#'
             return val
         if val:
             return val
@@ -78,7 +78,6 @@ class Login(APIView):
     def post(self, request):
         email = request.data["email"]
         password = request.data["password"]
-        
         try:
             user = RegisteredUsers.objects.get(email=email)
             if user.password == password:

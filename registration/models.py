@@ -1,10 +1,5 @@
-from enum import unique
-from pyexpat import model
-from turtle import back
 from django.db import models
-from django.contrib.auth.models import User
-from rest_framework.validators import UniqueValidator
-from rest_framework import serializers
+
 
 # Create your models here.
 
