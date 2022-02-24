@@ -5,31 +5,37 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.decorators import login_required
-
+from .models import ImageStorage
 import cv2
 import base64
 import numpy as np
 class UploadImage(APIView):
     def encode_img(self,location):
-        im=cv2.imread(r'C:\Users\duvvu\Downloads\Nikhil\Centennial\Sem_4\SoftwareDev\picsketcher\picsketcher-main\uploadImage\Assets\HappyFace.jpg')
-        im_resize=cv2.resize(im,(500,500))
-        image_bytes = cv2.imencode('.jpg', im_resize)[1].tobytes()
-    
-        return image_bytes
-    def decode_image(self,img_bytes):
+        try:
+            # print(type(location))
+            im=cv2.imread(location)
+            im_resize=cv2.resize(im,(500,500))
+            image_bytes = cv2.imencode('.jpg', im_resize)
+            jpg_as_text = base64.b64encode(image_bytes[1])
+        except:
+            return Response("error in encoding image")    
+        return jpg_as_text
+    def decode_image(self,img_base_64):
         try:
             # CV2
-            nparr = np.fromstring(img_bytes, np.uint8)
-            img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR) # cv2.IMREAD_COLOR in OpenCV 3.1
+            jpg_original = base64.b64decode(img_base_64)
+            jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
+            image_buffer = cv2.imdecode(jpg_as_np, flags=1)
         except:
             return Response('error in decoding the bytes image')
 
         
-        return img_np
+        return image_buffer
 
 
     def render_image(self,image):
         try:
+            print(type(image))
             img_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             img_blur = cv2.GaussianBlur(img_gray, (21,21), 0, 0)
             img_blend = cv2.divide(img_gray, img_blur, scale=256)
@@ -38,16 +44,15 @@ class UploadImage(APIView):
         return img_blend
     # @login_required
     def post(self, request):
-        # if request.user.is_authenticated:
-        #     print("yessssssss")
-        # else:
-        #     print("Noooooooooooo")
-        bytes_text = self.encode_img('./Assets/HappyFace.jpg') #replace this method with the bytes data from front end request
-        # response = request.data
-        # bytes_text = response['img']
-        #convert string to image
+        #encoding image uploaded to base64
+        bytes_text = self.encode_img('C:/Users/duvvu/Downloads/Nikhil/Centennial/Sem_4/SoftwareDev/picsketcher/picsketcher-main/uploadImage/Assets/HappyFace.jpg') #replace this method with the bytes data from front end request
+        print(type(bytes_text))
+        #decoding to np array
         image_s= self.decode_image(bytes_text)
-        
+        # #applying filters
         image_filtered = self.render_image(image_s)
-        cv2.imwrite('test.jpg',image_filtered)
-        return Response(image_filtered)
+        #encoding filtered image
+        image_bytes = cv2.imencode('.jpg', image_filtered)
+        jpg_as_text = base64.b64encode(image_bytes[1])
+        cv2.imwrite('C:/Users/duvvu/Downloads/Nikhil/Centennial/Sem_4/SoftwareDev/picsketcher/picsketcher-main/uploadImage/Assets/test.jpg',image_filtered)
+        return Response(jpg_as_text)
