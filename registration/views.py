@@ -5,7 +5,9 @@ from rest_framework.response import Response
 
 from .models import RegisteredUsers
 import re   
-  
+class Index(APIView):
+    def post(self,request):
+        return Response({"Success":True})
 
 # Create your views here.
 class Register(APIView):
@@ -54,11 +56,11 @@ class Register(APIView):
         firstname = request.data["firstname"]
         lastname = request.data["lastname"]
         if self.checkEmail(email):
-            return Response("Unable to register---Invalid Email Format")
+            return Response({"success":False,"message":"Unable to register---Invalid Email Format"})
         if not((firstname.isalpha()) and (lastname.isalpha())):
-            return Response("Unable to register---First and Last Name should be alphabetical")
+            return Response({"success":False,"message":"Unable to register---First and Last Name should be alphabetical"})
         if self.password_check(password):
-            return Response("incorrect password format--"+self.message)
+            return Response({"success":False,"message":"incorrect password format--"+self.message})
 
         try:
             user = RegisteredUsers.objects.create(
@@ -69,7 +71,7 @@ class Register(APIView):
         )
             user.save()
         except:
-            return Response("Please enter a unique email")
+            return Response({"success":False,"message":"Please enter a unique email"})
 
         return Response({"success":True,"message":"user successfully registered"})
 
@@ -83,6 +85,6 @@ class Login(APIView):
             if user.password == password:
                 return Response({"success":True, "message":"Successfully logged in"})
         except:
-            return Response("User with the given email does not exist")
+            return Response({"success":False,"message":"User with the given email does not exist"})
         
                

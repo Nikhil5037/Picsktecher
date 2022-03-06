@@ -18,7 +18,7 @@ class UploadImage(APIView):
             image_bytes = cv2.imencode('.jpg', im_resize)
             jpg_as_text = base64.b64encode(image_bytes[1])
         except:
-            return Response("error in encoding image")    
+            return Response({"success":False,"message":"error in encoding image"})    
         return jpg_as_text
     def decode_image(self,img_base_64):
         try:
@@ -27,7 +27,7 @@ class UploadImage(APIView):
             jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
             image_buffer = cv2.imdecode(jpg_as_np, flags=1)
         except:
-            return Response('error in decoding the bytes image')
+            return Response({"success":False,"message":"error in decoding the bytes image"})
 
         
         return image_buffer
