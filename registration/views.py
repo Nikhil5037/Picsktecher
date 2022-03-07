@@ -11,7 +11,7 @@ class Index(APIView):
 
 # Create your views here.
 class Register(APIView):
-    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$' 
+    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
     message=''
     def checkEmail(self,email): 
         if(re.search(self.regex,email)): 
