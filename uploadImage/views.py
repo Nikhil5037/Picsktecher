@@ -40,12 +40,12 @@ class UploadImage(APIView):
             img_blur = cv2.GaussianBlur(img_gray, (21,21), 0, 0)
             img_blend = cv2.divide(img_gray, img_blur, scale=256)
         except:
-            return Response('Error in image filtering')
+            return Response({"success":False,"message":"Error in image filtering"})
         return img_blend
     # @login_required
     def post(self, request):
         #encoding image uploaded to base64
-        bytes_text = request.data["image_bytes"]
+        bytes_text = request.data["image_bytes"] #replace this method with the bytes data from front end request
         print(type(bytes_text))
         #decoding to np array
         image_s= self.decode_image(bytes_text)
@@ -55,4 +55,4 @@ class UploadImage(APIView):
         image_bytes = cv2.imencode('.jpg', image_filtered)
         jpg_as_text = base64.b64encode(image_bytes[1])
         # cv2.imwrite('Assets/test.jpg',image_filtered)
-        return Response(jpg_as_text)
+        return Response({"success":True,"image_bytes":jpg_as_text})
