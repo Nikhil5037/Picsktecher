@@ -45,7 +45,7 @@ class UploadImage(APIView):
     # @login_required
     def post(self, request):
         #encoding image uploaded to base64
-        bytes_text = self.encode_img('C:/Users/duvvu/Downloads/Nikhil/Centennial/Sem_4/SoftwareDev/picsketcher/picsketcher-main/uploadImage/Assets/HappyFace.jpg') #replace this method with the bytes data from front end request
+        bytes_text = request.data["image_bytes"]
         print(type(bytes_text))
         #decoding to np array
         image_s= self.decode_image(bytes_text)
@@ -54,5 +54,5 @@ class UploadImage(APIView):
         #encoding filtered image
         image_bytes = cv2.imencode('.jpg', image_filtered)
         jpg_as_text = base64.b64encode(image_bytes[1])
-        cv2.imwrite('C:/Users/duvvu/Downloads/Nikhil/Centennial/Sem_4/SoftwareDev/picsketcher/picsketcher-main/uploadImage/Assets/test.jpg',image_filtered)
+        # cv2.imwrite('Assets/test.jpg',image_filtered)
         return Response(jpg_as_text)
