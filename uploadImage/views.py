@@ -1,10 +1,7 @@
-from django.shortcuts import render
-
 # Create your views here.
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.contrib.auth.decorators import login_required
 from .models import ImageStorage
 import cv2
 import base64
@@ -35,18 +32,15 @@ class UploadImage(APIView):
 
     def render_image(self,image):
         try:
-            print(type(image))
             img_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             img_blur = cv2.GaussianBlur(img_gray, (21,21), 0, 0)
             img_blend = cv2.divide(img_gray, img_blur, scale=256)
         except:
             return Response({"success":False,"message":"Error in image filtering"})
         return img_blend
-    # @login_required
     def post(self, request):
         #encoding image uploaded to base64
         bytes_text = request.data["image_bytes"] #replace this method with the bytes data from front end request
-        print(type(bytes_text))
         #decoding to np array
         image_s= self.decode_image(bytes_text)
         # #applying filters
