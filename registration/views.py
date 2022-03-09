@@ -112,9 +112,9 @@ class UserView(APIView):
         if not token:
             return Response({"message":"unauthentiated"})
         try:
-            payload =jwt.decode(token,'secret',algorithm = ['HS256'])
+            payload =jwt.decode(token,'secret',algorithms = ["HS256"])
         except:
             return Response({"message":"unauthentiated"})
         user = RegisteredUsers.objects.filter(id=payload['id']).first()
-        return Response({"user":user})
+        return Response({"success":True,"user":user.email})
                
