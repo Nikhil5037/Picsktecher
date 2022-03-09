@@ -1,7 +1,15 @@
 # picsketcher
 
-#pip install requirements.txt
+git clone <URL>
+  
+cd Picsketcher / in the root folder 
 
-#in the root folder run command 'python manage.py runserver'
+pip install requirements.txt
+  
+run python manage.py makemigrations
+  
+run python manage.py migrate
 
-#for unit tests 'python manage.py test'
+run command 'python manage.py runserver'
+
+for unit tests 'python manage.py test'
